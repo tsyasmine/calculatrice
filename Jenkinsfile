@@ -45,21 +45,22 @@ pipeline {
                 '''
             }
         }
+
         stage("Analyse statique du code") {
-      steps {
-           sh "./gradlew checkstyleMain"
-           publishHTML (target: [
-           reportDir: 'build/reports/checkstyle/',
-           reportFiles: 'main.html',
-           reportName: "Checkstyle Report"
-])
-           }
+            steps {
+                sh "./gradlew checkstyleMain"
+                publishHTML(target: [
+                    reportDir: 'build/reports/checkstyle/',
+                    reportFiles: 'main.html',
+                    reportName: "Checkstyle Report"
+                ])
+            }
         }
     }
 
     post {
         always {
-            // Plugin Jenkins JaCoCo → XML après JaCoCo + Gradle 8+
+            // Rapport JaCoCo
             jacoco(
                 execPattern: '**/jacoco.exec',
                 classPattern: 'build/classes/java/main',
@@ -74,15 +75,12 @@ pipeline {
                 reportName: 'Rapport JaCoCo HTML'
             ])
 
-            mail to : 'tss.yasmine@gmail.com'
-            subject: "notification de l etat de compilation est terminee: ${currentBuild.fullDisplayName}",
-            body: "Votre build est accompli, Veuillez verifier: ${env.BUILD_URL}"
-    
-        
+            // Notification par mail
+            mail(
+                to: 'tss.yasmine@gmail.com',
+                subject: "Notification : build terminé ${currentBuild.fullDisplayName}",
+                body: "Votre build est accompli, veuillez vérifier : ${env.BUILD_URL}"
+            )
         }
-    
-        }
-    
-
-
+    }
 }
