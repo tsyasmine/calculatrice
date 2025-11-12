@@ -73,6 +73,16 @@ pipeline {
                 reportFiles: 'index.html',
                 reportName: 'Rapport JaCoCo HTML'
             ])
+
+            mail to : 'tss.yasmine@gmail.com'
+            subject: "notification de l etat de compilation est terminee: ${currentBuild.fullDisplayName}",
+            body: "Votre build est accompli, Veuillez verifier: ${env.BUILD_URL}"
+    
+        
+        }
+    
         }
     }
+
+
 }
